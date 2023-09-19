@@ -1,6 +1,5 @@
 const express = require("express");
 const Victims = require("./victims");
-const victims = require("./victims");
 
 const router = express.Router();
 
@@ -26,11 +25,13 @@ router.post("/delete", async (req, res) => {
   } else {
     res.render("./delete.ejs", { csrfToken: req.csrfToken() });
   }
-  // res.render("./delete.ejs");
 });
 
 router.post("/auth", async (req, res) => {
   if (req.body.confirmpassword) {
+    if (req.body.confirmpassword !== req.body.password) {
+      return res.render("./form.ejs", { login: false, csrfToken: req.csrfToken() });
+    }
     const user = await Victims.create({
       username: req.body.username,
       password: req.body.password,
@@ -40,7 +41,7 @@ router.post("/auth", async (req, res) => {
   } else {
     const username = req.body.username;
     const password = req.body.password;
-    const user = await victims.findOne({
+    const user = await Victims.findOne({
       username: username,
       password: password,
     });
